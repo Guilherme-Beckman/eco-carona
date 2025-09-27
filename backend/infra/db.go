@@ -12,7 +12,11 @@ import (
 func CreateConnection() *gorm.DB {
 	//:= define automaticamente a tipagem
 	dns := "host=localhost user=eco-carona password=eco123 dbname=eco-db port:5432 sslmode=desable TimeZone=America/Campo_Grande"
-	db, err := gorm.Open(postgres.Open(dns), &gorm.Config{})
+	// essa declaração dupla possibilita lidar com os erros
+	// visto que gorm.Open pode retornar *gorm.DB ou um erros
+	db, err := gorm.Open(postgres.Open(dns),
+		//&gorm.Config {} -> da o endereço de memoria de gormConfig
+		&gorm.Config{})
 	if err != nil {
 		log.Fatal("Falha ao se conectar com o banco de dados", err)
 	}
