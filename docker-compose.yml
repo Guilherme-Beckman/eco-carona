@@ -1,0 +1,13 @@
+version : '3.1'
+
+services:
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: eco-carona
+      POSTGRES_PASSWORD: eco123
+      POSTGRES_DB: eco-db
+    ports:
+      - "5432:5432"
+
