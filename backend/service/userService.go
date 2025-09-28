@@ -40,8 +40,8 @@ func (s *UserService) SaveUser(user model.User) (model.User, error) {
 	return user, nil
 }
 
-func (s *UserService) UpdateUser(user model.User) (model.User, error) {
-	exist, err := s.FindById(user.ID)
+func (s *UserService) UpdateUser(user model.User, id uint64) (model.User, error) {
+	exist, err := s.FindById(id)
 	if err != nil {
 		return model.User{}, err
 	}
@@ -60,7 +60,7 @@ func (s *UserService) UpdateUser(user model.User) (model.User, error) {
 	return exist, nil
 }
 
-func (s *UserService) DeleteUser(id int64) error {
+func (s *UserService) DeleteUser(id uint64) error {
 	res := s.db.Delete(&model.User{}, id)
 	if res.Error != nil {
 		return res.Error
