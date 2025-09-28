@@ -22,7 +22,11 @@ func CreateConnection() *gorm.DB {
 	}
 	err = db.AutoMigrate(&model.User{})
 	if err != nil {
-		log.Fatal("falha ao migrar database ", err)
+		log.Fatal("falha ao migrar database do usuario", err)
+	}
+	err = db.AutoMigrate(&model.Car{})
+	if err != nil {
+		log.Fatal("falha ao migrar database do carro")
 	}
 	return db
 }
