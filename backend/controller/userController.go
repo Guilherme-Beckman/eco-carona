@@ -20,7 +20,8 @@ func NewUserController(service *service.UserService) *UserController {
 
 func (c *UserController) InitRoutes() {
 	app := gin.Default()
-	api := app.Group("/api/user/")
+	api := app.Group("/api/user")
+	api.GET("/:id", c.findById)
 	app.Run(":3000")
 }
 

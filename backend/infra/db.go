@@ -11,7 +11,7 @@ import (
 // funções publicas sao definidas pela letra maiscula no inicio
 func CreateConnection() *gorm.DB {
 	//:= define automaticamente a tipagem
-	dns := "host=localhost user=eco-carona password=eco123 dbname=eco-db port:5432 sslmode=desable TimeZone=America/Campo_Grande"
+	dns := "host=localhost user=eco-carona password=eco123 dbname=eco-db port=5432 sslmode=disable TimeZone=America/Campo_Grande"
 	// essa declaração dupla possibilita lidar com os erros
 	// visto que gorm.Open pode retornar *gorm.DB ou um erros
 	db, err := gorm.Open(postgres.Open(dns),
