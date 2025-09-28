@@ -13,6 +13,6 @@ type User struct {
 	Nome      string `gorm:"size:255;not null"`
 	Idade     int
 	CPF       string `gorm:"size:14;unique;not null"`
-	Turno     Turno  `gorm:"type:enum('manha','tarde','noite');not null"`
+	Turno     Turno  `gorm:"type:varchar(10);not null"`
 	Descricao string `gorm:"size:255"`
 }
