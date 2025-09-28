@@ -9,25 +9,25 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type UserController struct {
-	service *service.UserService
+type CarController struct {
+	service *service.CarService
 }
 
-func NewUserController(service *service.UserService) *UserController {
-	return &UserController{
+func NewCarController(service *service.CarService) *CarController {
+	return &CarController{
 		service: service,
 	}
 }
 
-func (c *UserController) InitRoutes(router *gin.Engine) {
-	api := router.Group("/api/user")
+func (c *CarController) InitRoutes(router *gin.Engine) {
+	api := router.Group("/api/car")
 	api.GET("/:id", c.findById)
-	api.POST("/", c.saveUser)
-	api.PUT("/:id", c.updateUser)
-	api.DELETE("/:id", c.deleteUserById)
+	api.POST("/", c.saveCar)
+	api.PUT("/:id", c.updateCar)
+	api.DELETE("/:id", c.deleteCarById)
 }
 
-func (c *UserController) findById(ctx *gin.Context) {
+func (c *CarController) findById(ctx *gin.Context) {
 	idString := ctx.Param("id")
 
 	id, err := strconv.ParseUint(idString, 10, 64)
@@ -37,7 +37,7 @@ func (c *UserController) findById(ctx *gin.Context) {
 		return
 	}
 
-	user, err := c.service.FindById(id)
+	car, err := c.service.FindById(id)
 	if err != nil {
 		ctx.JSON(
 			http.StatusBadRequest, gin.H{"error": "Usuario nao encontrado"})
@@ -45,20 +45,20 @@ func (c *UserController) findById(ctx *gin.Context) {
 
 	}
 
-	ctx.JSON(http.StatusOK, user)
+	ctx.JSON(http.StatusOK, car)
 }
 
-func (c *UserController) saveUser(ctx *gin.Context) {
-	userP := new(model.User)
+func (c *CarController) saveCar(ctx *gin.Context) {
+	carP := new(model.Car)
 
-	if err := ctx.ShouldBindJSON(&userP); err != nil {
+	if err := ctx.ShouldBindJSON(&carP); err != nil {
 		ctx.JSON(
 			http.StatusBadRequest,
 			gin.H{"error": "Estrutura Json do usuario ta errada"},
 		)
 		return
 	}
-	user, err := c.service.SaveUser(*userP)
+	car, err := c.service.SaveCar(*carP)
 	if err != nil {
 		ctx.JSON(
 			http.StatusBadRequest,
@@ -66,13 +66,13 @@ func (c *UserController) saveUser(ctx *gin.Context) {
 		)
 		return
 	}
-	ctx.JSON(http.StatusCreated, gin.H{"user": user})
+	ctx.JSON(http.StatusCreated, gin.H{"car": car})
 }
 
-func (c *UserController) updateUser(ctx *gin.Context) {
-	userP := new(model.User)
+func (c *CarController) updateCar(ctx *gin.Context) {
+	carP := new(model.Car)
 
-	if err := ctx.ShouldBindJSON(&userP); err != nil {
+	if err := ctx.ShouldBindJSON(&carP); err != nil {
 		ctx.JSON(http.StatusBadRequest,
 			gin.H{"error": "Erro na Estrutura do JSON"})
 		return
@@ -87,17 +87,17 @@ func (c *UserController) updateUser(ctx *gin.Context) {
 		return
 	}
 
-	user, err := c.service.UpdateUser(*userP, id)
+	car, err := c.service.UpdateCar(*carP, id)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest,
 			gin.H{"error": "Erro ao editar usuario"})
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"user": user})
+	ctx.JSON(http.StatusOK, gin.H{"car": car})
 }
 
-func (c *UserController) deleteUserById(ctx *gin.Context) {
+func (c *CarController) deleteCarById(ctx *gin.Context) {
 	idString := ctx.Param("id")
 
 	id, err := strconv.ParseUint(idString, 10, 64)
@@ -106,7 +106,7 @@ func (c *UserController) deleteUserById(ctx *gin.Context) {
 		return
 	}
 
-	err = c.service.DeleteUser(id)
+	err = c.service.DeleteCar(id)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Erro ao deletar usuario"})
 		return
