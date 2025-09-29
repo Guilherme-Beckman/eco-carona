@@ -40,7 +40,7 @@ func (c *CarController) findById(ctx *gin.Context) {
 	car, err := c.service.FindById(id)
 	if err != nil {
 		ctx.JSON(
-			http.StatusBadRequest, gin.H{"error": "Usuario nao encontrado"})
+			http.StatusBadRequest, gin.H{"error": "Carro nao encontrado"})
 		return
 
 	}
@@ -54,7 +54,7 @@ func (c *CarController) saveCar(ctx *gin.Context) {
 	if err := ctx.ShouldBindJSON(&carP); err != nil {
 		ctx.JSON(
 			http.StatusBadRequest,
-			gin.H{"error": "Estrutura Json do usuario ta errada"},
+			gin.H{"error": "Estrutura Json do Carro ta errada"},
 		)
 		return
 	}
@@ -62,7 +62,7 @@ func (c *CarController) saveCar(ctx *gin.Context) {
 	if err != nil {
 		ctx.JSON(
 			http.StatusBadRequest,
-			gin.H{"error": "Erro ao salvar usuario"},
+			gin.H{"error": "Erro ao salvar Carro"},
 		)
 		return
 	}
@@ -90,7 +90,7 @@ func (c *CarController) updateCar(ctx *gin.Context) {
 	car, err := c.service.UpdateCar(*carP, id)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest,
-			gin.H{"error": "Erro ao editar usuario"})
+			gin.H{"error": "Erro ao editar caro"})
 		return
 	}
 
@@ -108,7 +108,7 @@ func (c *CarController) deleteCarById(ctx *gin.Context) {
 
 	err = c.service.DeleteCar(id)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Erro ao deletar usuario"})
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Erro ao deletar Carro"})
 		return
 	}
 	ctx.JSON(http.StatusNoContent, nil)
