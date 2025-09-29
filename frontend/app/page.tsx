@@ -1,8 +1,5 @@
 import UserForm from "@/components/UserForm";
-
+import { redirect } from "next/navigation";
 export default function Home() {
-  return (
-    <div>
-      <UserForm></UserForm>
-    </div>);
+  redirect("/users");
 }
