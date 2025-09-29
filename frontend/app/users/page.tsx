@@ -45,7 +45,7 @@ export default function UsersPage() {
   if (loading) return <p>Carregando usuários...</p>
   if (error) return <p>Erro: {error}</p>
   const handleEdit = (userId?: number) => {
-    router.push(`/user/edit/${userId}`)
+    router.push(`/users/edit/${userId}`)
   }
 
   return (
