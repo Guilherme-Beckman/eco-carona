@@ -22,6 +22,7 @@ func NewUserController(service *service.UserService) *UserController {
 func (c *UserController) InitRoutes(router *gin.Engine) {
 	api := router.Group("/api/user")
 	api.GET("/:id", c.findById)
+	api.GET("/all", c.getAllUsers)
 	api.POST("/", c.saveUser)
 	api.PUT("/:id", c.updateUser)
 	api.DELETE("/:id", c.deleteUserById)
@@ -46,6 +47,16 @@ func (c *UserController) findById(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, user)
+}
+
+func (c *UserController) getAllUsers(ctx *gin.Context) {
+	users, err := c.service.GetAllUsers()
+	if err != nil {
+		ctx.JSON(
+			http.StatusBadRequest, gin.H{"error": "Erro ao pegar os usuarios"})
+		return
+	}
+	ctx.JSON(http.StatusOK, users)
 }
 
 func (c *UserController) saveUser(ctx *gin.Context) {

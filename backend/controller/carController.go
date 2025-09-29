@@ -22,6 +22,7 @@ func NewCarController(service *service.CarService) *CarController {
 func (c *CarController) InitRoutes(router *gin.Engine) {
 	api := router.Group("/api/car")
 	api.GET("/:id", c.findById)
+	api.GET("/all", c.getAllCars)
 	api.POST("/", c.saveCar)
 	api.PUT("/:id", c.updateCar)
 	api.DELETE("/:id", c.deleteCarById)
@@ -95,6 +96,16 @@ func (c *CarController) updateCar(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"car": car})
+}
+
+func (c *CarController) getAllCars(ctx *gin.Context) {
+	cars, err := c.service.GetAllCars()
+	if err != nil {
+		ctx.JSON(
+			http.StatusBadRequest, gin.H{"error": "Erro ao pegar os carros"})
+		return
+	}
+	ctx.JSON(http.StatusOK, cars)
 }
 
 func (c *CarController) deleteCarById(ctx *gin.Context) {

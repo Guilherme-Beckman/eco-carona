@@ -32,6 +32,16 @@ func (s *CarService) FindById(id uint64) (model.Car, error) {
 	return *car, nil
 }
 
+func (s *CarService) GetAllCars() ([]model.Car, error) {
+	var cars []model.Car
+	result := s.db.Find(&cars)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return cars, nil
+}
+
 func (s *CarService) SaveCar(car model.Car) (model.Car, error) {
 	result := s.db.Create(&car)
 	if result.Error != nil {
