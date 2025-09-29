@@ -153,7 +153,7 @@ export default function UserForm({ initial, mode = "create" }:
             <FormItem>
               <FormLabel>Descrição</FormLabel>
               <FormControl>
-                <Textarea />
+                <Textarea placeholder="Descrição" {...field}/>
               </FormControl>
             </FormItem>
           )}
