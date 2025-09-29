@@ -1,21 +1,10 @@
-
 'use client'
-
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
 import { useEffect, useState } from "react"
-import { apiGet, apiPut } from "@/lib/api"
+import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
 import { Pencil, TrashIcon } from "lucide-react"
+import { apiGet, apiDelete } from "@/lib/api"
 import { useRouter } from "next/navigation"
-
 
 export interface User {
   ID: number
@@ -25,12 +14,18 @@ export interface User {
   Turno: string
   Descricao: string
 }
+
 export default function UsersPage() {
   const [users, setUsers] = useState<User[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const router = useRouter()
+
   useEffect(() => {
+    fetchUsers()
+  }, [])
+
+  const fetchUsers = () => {
     apiGet("/api/user/all")
       .then((data) => {
         setUsers(data)
@@ -40,13 +35,29 @@ export default function UsersPage() {
         setError(err.message)
         setLoading(false)
       })
-  }, [])
+  }
 
-  if (loading) return <p>Carregando usuários...</p>
-  if (error) return <p>Erro: {error}</p>
   const handleEdit = (userId?: number) => {
     router.push(`/users/edit/${userId}`)
   }
+
+  const handleDelete = async (userId: number, userName: string) => {
+    const confirmed = window.confirm(
+      `Tem certeza que deseja deletar o usuário "${userName}"?`
+    )
+
+    if (!confirmed) return
+
+    try {
+      await apiDelete(`/api/user/${userId}`)
+      setUsers(users.filter(user => user.ID !== userId))
+    } catch (err: any) {
+      alert(`Erro ao deletar usuário: ${err.message}`)
+    }
+  }
+
+  if (loading) return <p>Carregando usuários...</p>
+  if (error) return <p>Erro: {error}</p>
 
   return (
     <Table>
@@ -61,7 +72,6 @@ export default function UsersPage() {
           <TableHead>Descrição</TableHead>
           <TableHead>Editar</TableHead>
           <TableHead>Excluir</TableHead>
-
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -73,8 +83,24 @@ export default function UsersPage() {
             <TableCell>{user.CPF}</TableCell>
             <TableCell>{user.Turno}</TableCell>
             <TableCell>{user.Descricao || "-"}</TableCell>
-            <TableCell><Button type="button" className="bg-blue-300" onClick={() => handleEdit(user.ID)}><Pencil className="bg-blue-300" /></Button></TableCell>
-            <TableCell ><Button type="button" className="bg-red-400" onClick={() => { }}><TrashIcon className="bg-red-400" /></Button></TableCell>
+            <TableCell>
+              <Button
+                type="button"
+                className="bg-blue-300 hover:bg-blue-400"
+                onClick={() => handleEdit(user.ID)}
+              >
+                <Pencil className="bg-blue-300" />
+              </Button>
+            </TableCell>
+            <TableCell>
+              <Button
+                type="button"
+                className="bg-red-400 hover:bg-red-500"
+                onClick={() => handleDelete(user.ID, user.Nome)}
+              >
+                <TrashIcon className="bg-red-400" />
+              </Button>
+            </TableCell>
           </TableRow>
         ))}
       </TableBody>
