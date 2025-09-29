@@ -89,11 +89,19 @@ export default function UserForm({ initial, mode = "create" }:
         <FormField
           control={form.control}
           name="idade"
-          render={({ field }) => (
+          render={({ field: { onChange, ...props } }) => (
             <FormItem>
               <FormLabel>Idade</FormLabel>
               <FormControl>
-                <Input placeholder="18" type="number" min={1} {...field}></Input>
+                <Input placeholder="18" type="number"
+                  min={1}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    onChange(value === '' ? 0 : Number(value))
+                  }}
+                  {...props}>
+
+                </Input>
               </FormControl>
             </FormItem>
           )}
@@ -119,11 +127,11 @@ export default function UserForm({ initial, mode = "create" }:
         <FormField
           control={form.control}
           name="turno"
-          render={() => (
+          render={({ field }) => (
             <FormItem>
               <FormLabel>Turno</FormLabel>
               <FormControl>
-                <Select>
+                <Select onValueChange={field.onChange} defaultValue="field.value">
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Turno" />
                   </SelectTrigger>
