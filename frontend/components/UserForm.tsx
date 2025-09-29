@@ -10,10 +10,32 @@ import { id } from "zod/locales"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "./ui/form"
 import { Input } from "./ui/input"
 import { Button } from "./ui/button"
+import { formatCpf } from "@/core/utils/formatCpf"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import { Textarea } from "./ui/textarea"
 const formSchema = z.object({
   nome: z.string().min(2, { message: "O nome deve ter pelo menos 2 caracteres" }),
   idade: z.number().min(1, { message: "Idade deve ser maior que 0" }).nonnegative(),
-  cpf: z.string().min(11, { message: "CPF inválido" }),
+  cpf: z
+    .string()
+    .refine((doc) => {
+      const replacedDoc = doc.replace(/\D/g, '');
+      return replacedDoc.length >= 11;
+    }, 'CPF/CNPJ deve conter no mínimo 11 caracteres.')
+    .refine((doc) => {
+      const replacedDoc = doc.replace(/\D/g, '');
+      return replacedDoc.length <= 14;
+    }, 'CPF/CNPJ deve conter no máximo 14 caracteres.')
+    .refine((doc) => {
+      const replacedDoc = doc.replace(/\D/g, '');
+      return !!Number(replacedDoc);
+    }, 'CPF/CNPJ deve conter apenas números.'),
   turno: z.string().nonempty({ message: "Informe o turno" }),
   descricao: z.string().optional(),
 })
@@ -40,9 +62,11 @@ export default function UserForm({ initial, mode = "create" }:
         if (!initial?.id) throw new Error("sem Idade")
         await apiPut(`api/user/${initial.id}`, values)
       }
+
+      router.push("/users")
     }
     catch (err: any) {
-      console.error(err)
+      form.setError("root", { message: err.message || String(err) })
     }
   }
 
@@ -77,17 +101,59 @@ export default function UserForm({ initial, mode = "create" }:
         </FormField>
         <FormField
           control={form.control}
-          name="idade"
-          render={({ field }) => (
+          name="cpf"
+          render={({ field: { onChange, ...props } }) => (
             <FormItem>
               <FormLabel>CPF</FormLabel>
               <FormControl>
-                <Input placeholder="123.456.789-10" type="text" {...field}></Input>
+                <Input placeholder="123.456.789.10" type="text"
+                  onChange={(e) => {
+                    const { value } = e.target;
+                    e.target.value = formatCpf(value)
+                    onChange(e)
+                  }} {...props}></Input>
+              </FormControl>
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="turno"
+          render={() => (
+            <FormItem>
+              <FormLabel>Turno</FormLabel>
+              <FormControl>
+                <Select>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Turno" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="manha">Manhã</SelectItem>
+                    <SelectItem value="tarde">Tarde</SelectItem>
+                    <SelectItem value="noite">Noite</SelectItem>
+                  </SelectContent>
+                </Select>
               </FormControl>
             </FormItem>
           )}
         >
         </FormField>
+        <FormField
+          control={form.control}
+          name="descricao"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Descrição</FormLabel>
+              <FormControl>
+                <Textarea />
+              </FormControl>
+            </FormItem>
+          )}
+        />
+
+        {form.formState.errors.root && (
+          <p className="text-red-600 text-sm">{form.formState.errors.root.message}</p>
+        )}
         <Button type="submit" className="w-full">
           {mode === "create" ? "Criar" : "Salvar alterações"}
         </Button>
