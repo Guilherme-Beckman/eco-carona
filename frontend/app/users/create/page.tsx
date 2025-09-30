@@ -2,10 +2,10 @@
 'use client'
 import UserForm from "@/components/UserForm";
 
-export default function EditUserPage() {
+export default function CreateUserPage() {
   return (
     <div>
-      <UserForm mode="edit"></UserForm>
+      <UserForm mode="create"></UserForm>
     </div>
   )
 }

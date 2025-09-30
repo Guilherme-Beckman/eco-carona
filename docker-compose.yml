@@ -1,8 +1,6 @@
-version : '3.1'
-
 services:
   db:
-    image: postgres
+    image: postgres:16
     restart: always
     environment:
       POSTGRES_USER: eco-carona
@@ -10,4 +8,40 @@ services:
       POSTGRES_DB: eco-db
     ports:
       - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
 
+  backend:
+    build: ./backend
+    container_name: eco-backend
+    restart: always
+    depends_on:
+      - db
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USER: eco-carona
+      DB_PASSWORD: eco123
+      DB_NAME: eco-db
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./backend:/app
+    working_dir: /app
+    command: go run main.go
+
+  frontend:
+    build: ./frontend
+    container_name: eco-frontend
+    restart: always
+    depends_on:
+      - backend
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    working_dir: /app
+
+volumes:
+  db_data:
