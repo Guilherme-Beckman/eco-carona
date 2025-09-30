@@ -20,5 +20,5 @@ func main() {
 	carController := controller.NewCarController(carService)
 	carController.InitRoutes(router)
 
-	router.Run(":3000")
+	router.Run(":8080")
 }
