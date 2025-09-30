@@ -6,3 +6,13 @@ export type User = {
   turno: string
   descricao: string
 }
+
+export type Car = {
+  id?: string
+  marca: string
+  modelo: string
+  ano: number
+  cor: string
+  lugares: number
+  consumoKmL: number
+}
