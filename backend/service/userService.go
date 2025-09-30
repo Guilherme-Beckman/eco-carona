@@ -32,6 +32,16 @@ func (s *UserService) FindById(id uint64) (model.User, error) {
 	return *user, nil
 }
 
+func (s *UserService) GetAllUsers() ([]model.User, error) {
+	var users []model.User
+	result := s.db.Find(&users)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return users, nil
+}
+
 func (s *UserService) SaveUser(user model.User) (model.User, error) {
 	result := s.db.Create(&user)
 	if result.Error != nil {
